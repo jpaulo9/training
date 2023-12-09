@@ -1,7 +1,9 @@
 package com.aula5.fivespring.services;
 
 
+import com.aula5.fivespring.data.vo.v1.PersonVO;
 import com.aula5.fivespring.exceptions.ResourceNotFounException;
+import com.aula5.fivespring.mapper.DozerMapper;
 import com.aula5.fivespring.model.Person;
 import com.aula5.fivespring.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,32 +19,38 @@ public class PersonServices {
     private PersonRepository personRepository;
     private Logger logger = Logger.getLogger(PersonServices.class.getName());
 
-    public Person findById (Long id){
+    public PersonVO findById (Long id){
 
         logger.info("Uma pessoa");
 
-        return personRepository.findById(id)
+                var entity =personRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFounException("No records found for this ID"));
+
+        var personvo = DozerMapper.parseObject(entity, PersonVO.class);
+        return personvo;
     }
 
-    public List<Person> findAll(){
+    public List<PersonVO> findAll(){
         logger.info("Várias pessoas");
 
 
-        return personRepository.findAll();
+        return DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
     }
 
 
-    public Person create(Person person) {
+    public PersonVO create(PersonVO person) {
         logger.info("Criado");
-        return personRepository.save(person);
+        var entity = DozerMapper.parseObject(person, Person.class);
 
+        var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+
+        return vo;
     }
 
-    public Person update(Person person) {
+    public PersonVO update(PersonVO person) {
         logger.info("Update");
 
-       Person entity = personRepository.findById(person.getId())
+       var entity = personRepository.findById(person.getId())
                 .orElseThrow(() -> new ResourceNotFounException("Not found ID"));
 
         entity.setFirstName(person.getFirstName());
@@ -50,7 +58,8 @@ public class PersonServices {
         entity.setAddress(person.getAddress());
         entity.setGender(person.getGender());
 
-        return personRepository.save(entity);
+        var vo = DozerMapper.parseObject(personRepository.save(entity), PersonVO.class);
+        return vo;
 
     }
 
