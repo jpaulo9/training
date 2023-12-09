@@ -2,6 +2,7 @@ package com.aula5.fivespring.controllers;
 
 
 import com.aula5.fivespring.model.Person;
+import com.aula5.fivespring.repository.PersonRepository;
 import com.aula5.fivespring.services.PersonServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,16 +17,15 @@ public class PersonController {
     @Autowired
     private PersonServices personServices ;
 
-    @RequestMapping(value = "/{id}",
-    method = RequestMethod.GET,
+
+    @GetMapping(value = "/{id}",
     produces = MediaType.APPLICATION_JSON_VALUE)
-    public Person getPerson (@PathVariable(value = "id") String id
+    public Person getPerson (@PathVariable(value = "id") Long id
                         )throws Exception{
 
         return personServices.findById(id);
     }
-    @RequestMapping(
-            method = RequestMethod.POST,
+    @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Person newPerson (@RequestBody Person person){
@@ -33,25 +33,22 @@ public class PersonController {
         return personServices.create(person);
     }
 
-    @RequestMapping(
-            method = RequestMethod.PUT,
+    @PutMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Person upPerson (@RequestBody Person person){
 
         return personServices.update(person);
     }
-    @RequestMapping(
-            method = RequestMethod.GET,
+    @GetMapping(
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Person> findAll (){
 
         return personServices.findAll();
     }
 
-    @RequestMapping(value = "/{id}",
-            method = RequestMethod.DELETE)
-    public void deletePerson (@PathVariable(value = "id") String id){
+    @DeleteMapping(value = "/{id}")
+    public void deletePerson (@PathVariable(value = "id") Long id){
 
          personServices.delete(id);
     }

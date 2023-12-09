@@ -2,6 +2,7 @@ package com.aula5.fivespring.exceptions.handler;
 
 
 import com.aula5.fivespring.exceptions.ExceptioResponse;
+import com.aula5.fivespring.exceptions.ResourceNotFounException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,14 +29,14 @@ public class CustomizeResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(exceptioResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(UnsupportedOperationException.class)
-    public final ResponseEntity<ExceptioResponse> handlerBadResquestExceptions(Exception ex, WebRequest request){
+    @ExceptionHandler(ResourceNotFounException.class)
+    public final ResponseEntity<ExceptioResponse> handlerNotFoundExceptions(Exception ex, WebRequest request){
         ExceptioResponse exceptioResponse = new ExceptioResponse(
                 new Date(),
                 ex.getMessage(),
                 request.getDescription(false)
         );
 
-        return new ResponseEntity<>(exceptioResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(exceptioResponse, HttpStatus.NOT_FOUND);
     }
 }
