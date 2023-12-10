@@ -16,7 +16,7 @@ public class OpenApiConfig {
     OpenAPI customOpenAPI(){
         return new OpenAPI()
                 .info(new Info()
-                        .title("RESTFULL API")
+                        .title("RESTFULL API Spring Boot 3.0.6 Java 17")
                         .version("v1")
                         .description("Nerver se Never")
                         .termsOfService("https://license.openai.com")
