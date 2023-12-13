@@ -122,6 +122,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 		mockPerson();
 
+		System.out.println(" "+personvo.getId());
 		specification =
 				new RequestSpecBuilder()
 						.addHeader(TestConfigs.HEADER_PARAM_ORIGIN, TestConfigs.ORIGIN_OK)
