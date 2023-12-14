@@ -1,8 +1,11 @@
 package com.java.spring.integrationtests.vo;
 
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 import java.util.Objects;
 
+@XmlRootElement
 public class PersonVO implements Serializable {
 
 

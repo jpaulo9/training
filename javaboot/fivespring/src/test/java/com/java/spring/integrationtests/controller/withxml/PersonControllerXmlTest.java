@@ -1,4 +1,4 @@
-package com.java.spring.integrationtests.controller.withjson;
+package com.java.spring.integrationtests.controller.withxml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -8,7 +8,6 @@ import com.java.spring.integrationtests.vo.AccountCredentialsVO;
 import com.java.spring.integrationtests.vo.PersonVO;
 import com.java.spring.integrationtests.vo.TokenVO;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.common.mapper.TypeRef;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -31,7 +30,7 @@ import static org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
-public class PersonControllerJsonTest extends AbstractIntegrationTest {
+public class PersonControllerXmlTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
 	private static ObjectMapper objectMapper;
@@ -57,7 +56,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		var acessToken =
 				given().basePath("/auth/signin")
 						.port(TestConfigs.SERVER_PORT)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.body(user)
 				.when()
 				.post()
@@ -86,7 +85,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 		var content =
 				given().spec(specification)
-						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+						.contentType(TestConfigs.CONTENT_TYPE_XML)
 						.body(personvo)
 						.when()
 						.post()
@@ -123,7 +122,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 		var content =
 				given().spec(specification)
-						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+						.contentType(TestConfigs.CONTENT_TYPE_XML)
 						.pathParam("id", personvo.getId())
 						.when()
 						.get("{id}")
@@ -155,7 +154,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 		var content =
 				given().spec(specification)
-						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+						.contentType(TestConfigs.CONTENT_TYPE_XML)
 						.body(personvo)
 						.when()
 						.post()
@@ -186,7 +185,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	public void TDeletePerson () throws IOException {
 
 				given().spec(specification)
-						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+						.contentType(TestConfigs.CONTENT_TYPE_XML)
 						.pathParam("id", personvo.getId())
 						.when()
 						.delete("{id}")
@@ -203,7 +202,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 
 				var list = given().spec(specification)
-						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+						.contentType(TestConfigs.CONTENT_TYPE_XML)
 						.when()
 						.get()
 						.then()
@@ -239,7 +238,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 
          given().spec(specificationErr)
-				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.contentType(TestConfigs.CONTENT_TYPE_XML)
 				.when()
 				.get()
 				.then()
