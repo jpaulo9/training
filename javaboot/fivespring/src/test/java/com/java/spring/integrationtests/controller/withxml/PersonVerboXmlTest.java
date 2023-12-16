@@ -200,6 +200,7 @@ public class PersonVerboXmlTest extends AbstractIntegrationTest {
 		personvo.setLastName("Stallman");
 		personvo.setAddress("New York City, US");
 		personvo.setGender("Male");
+		personvo.setEnabled(true);
 	}
 
 }

@@ -10,8 +10,15 @@ import com.java.spring.model.Person;
 import com.java.spring.repository.PersonRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -24,6 +31,9 @@ public class PersonServices {
     @Autowired
     private PersonRepository personRepository;
     private Logger logger = Logger.getLogger(PersonServices.class.getName());
+
+    @Autowired
+    private PagedResourcesAssembler<PersonVO> assembler;
 
     public PersonVO findById (Long id) throws Exception {
 
@@ -51,23 +61,52 @@ public class PersonServices {
         return personvo;
     }
 
-    public List<PersonVO> findAll(){
+    public PagedModel<EntityModel<PersonVO>> findAll(Pageable pageable) {
         logger.info("Várias pessoas");
 
+        var personPage = personRepository.findAll(pageable);
+        var personVOpage = personPage.map(p -> DozerMapper.parseObject(p, PersonVO.class));
 
-        var persons= DozerMapper.parseListObjects(personRepository.findAll(), PersonVO.class);
-
-        persons.stream().forEach(
-                p -> {
-                    try {
-                        p.add(linkTo(methodOn(PersonController.class).findById(p.getKey()))
+        personVOpage.map(p -> {
+            try {
+                return p.add(linkTo(methodOn(PersonController.class)
+                                .findById(p.getKey()))
                                 .withSelfRel());
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
-        return persons;
+
+        Link link = linkTo(methodOn(PersonController.class)
+                .findAll(pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        "asc")).withSelfRel();
+        return assembler.toModel( personVOpage, link);
+
+    }
+    public PagedModel<EntityModel<PersonVO>> findPersonsByName(String firstName, Pageable pageable) {
+        logger.info("Várias pessoas");
+
+        var personPage = personRepository.findPersonsByName(firstName, pageable);
+        var personVOpage = personPage.map(p -> DozerMapper.parseObject(p, PersonVO.class));
+
+        personVOpage.map(p -> {
+            try {
+                return p.add(linkTo(methodOn(PersonController.class)
+                        .findById(p.getKey()))
+                        .withSelfRel());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+
+        Link link = linkTo(methodOn(PersonController.class)
+                .findAll(pageable.getPageNumber(),
+                        pageable.getPageSize(),
+                        "asc")).withSelfRel();
+        return assembler.toModel( personVOpage, link);
 
     }
 

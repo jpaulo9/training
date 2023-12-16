@@ -7,6 +7,7 @@ import com.java.spring.integrationtests.testcontainers.AbstractIntegrationTest;
 import com.java.spring.integrationtests.vo.AccountCredentialsVO;
 import com.java.spring.integrationtests.vo.PersonVO;
 import com.java.spring.integrationtests.vo.TokenVO;
+import com.java.spring.integrationtests.vo.Wrappers.WrapperPersonVO;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -240,6 +241,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 				var list = given().spec(specification)
 						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+						.queryParams("page", 3, "size", 10, "direction", "asc")
 						.when()
 						.get()
 						.then()
@@ -249,16 +251,18 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 						.asString();
 
 
-		List<PersonVO> lista = objectMapper.readValue(list, new TypeReference<List<PersonVO>>() {});
+		WrapperPersonVO wrapperPersonVO = objectMapper.readValue(list, WrapperPersonVO.class);
+		var lista = wrapperPersonVO.getEmmbeddedVO().getPersons();
 
 
 		PersonVO person1 = lista.get(0);
 		assertNotNull(person1);
 
-		assertEquals("Ayrton",person1.getFirstName());
-		assertEquals("Senna",person1.getLastName());
-		assertEquals("São Paulo",person1.getAddress());
-		assertEquals("Male",person1.getGender());
+		assertEquals(834, person1.getId());
+		assertEquals("Aloysia",person1.getFirstName());
+		assertEquals("Firman",person1.getLastName());
+		assertEquals("2504 Sachtjen Junction",person1.getAddress());
+		assertEquals("Female",person1.getGender());
 		assertTrue(person1.getEnabled());
 
 	}
@@ -284,7 +288,59 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 	}
 
+	@Test
+	@Order(8)
+	public void TGetPersonsByName () throws IOException, JsonMappingException, JsonProcessingException {
 
+
+		var list = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.pathParam("firstName", "ayr")
+				.queryParams("page", 0, "size", 6, "direction", "asc")
+				.when()
+				.get("findPersonsByname/{firstName}")
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+
+
+		WrapperPersonVO wrapperPersonVO = objectMapper.readValue(list, WrapperPersonVO.class);
+		var lista = wrapperPersonVO.getEmmbeddedVO().getPersons();
+
+
+		PersonVO person1 = lista.get(0);
+		assertNotNull(person1);
+
+		assertEquals(1, person1.getId());
+		assertEquals("Ayrton",person1.getFirstName());
+		assertEquals("Senna",person1.getLastName());
+		assertEquals("São Paulo",person1.getAddress());
+		assertEquals("Male",person1.getGender());
+		assertTrue(person1.getEnabled());
+
+	}
+
+	@Test
+	@Order(9)
+	public void THateoas () throws IOException, JsonMappingException, JsonProcessingException {
+
+
+		var list = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.accept(TestConfigs.CONTENT_TYPE_JSON)
+				.queryParams("page", 3, "size", 10, "direction", "asc")
+				.when()
+				.get()
+				.then()
+				.statusCode(200)
+				.extract()
+				.body()
+				.asString();
+     assertTrue(list.contains("\"_links\":{\"self\":{\"href\":\"http://localhost:8888/api/person/v1/800\""));
+	  assertTrue(list.contains("\"last\":{\"href\":\"http://localhost:8888/api/person/v1?limit=12&direction=asc&page=83&size=12&sort=firstName,asc\"}}"));
+	}
 
 	private void mockPerson() {
 
