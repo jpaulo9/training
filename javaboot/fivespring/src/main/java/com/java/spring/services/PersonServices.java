@@ -8,6 +8,7 @@ import com.java.spring.exceptions.ResourceNotFounException;
 import com.java.spring.mapper.DozerMapper;
 import com.java.spring.model.Person;
 import com.java.spring.repository.PersonRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -29,6 +30,20 @@ public class PersonServices {
         logger.info("Uma pessoa");
 
                 var entity =personRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFounException("No records found for this ID"));
+
+        PersonVO personvo = DozerMapper.parseObject(entity, PersonVO.class);
+        personvo.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+        return personvo;
+    }
+
+    @Transactional
+    public PersonVO disabelPerson (Long id) throws Exception {
+
+        logger.info("disabilitar uma pessoa");
+        personRepository.disablePerson(id);
+
+        var entity =personRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFounException("No records found for this ID"));
 
         PersonVO personvo = DozerMapper.parseObject(entity, PersonVO.class);

@@ -22,10 +22,9 @@ public class PersonController {
     @Autowired
     private PersonServices personServices ;
 
-
-    @GetMapping(value = "/{id}",
+    @PatchMapping(value = "/{id}",
     produces = {MediaTypes.APPLICATION_JSON, MediaTypes.APPLICATION_XML, MediaTypes.APPLICATION_YAML})
-    @Operation(summary = "Get a Person", description = "Get a Person",
+    @Operation(summary = "Disable Person", description = "Disable Person",
       tags = {"Pessoas"},
       responses = {
             @ApiResponse(description = "Success", responseCode = "200",
@@ -38,8 +37,28 @@ public class PersonController {
 
 
       } )
-    public PersonVO findById (@PathVariable(value = "id") Long id
+    public PersonVO disablePerson(@PathVariable(value = "id") Long id
                         )throws Exception{
+
+        return personServices.disabelPerson(id);
+    }
+    @GetMapping(value = "/{id}",
+            produces = {MediaTypes.APPLICATION_JSON, MediaTypes.APPLICATION_XML, MediaTypes.APPLICATION_YAML})
+    @Operation(summary = "Get a Person", description = "Get a Person",
+            tags = {"Pessoas"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content =@Content (schema = @Schema(implementation = PersonVO.class)) ),//status ok
+                    @ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Internal Server Error", responseCode = "500", content = @Content),
+
+
+            } )
+    public PersonVO findById (@PathVariable(value = "id") Long id
+    )throws Exception{
 
         return personServices.findById(id);
     }

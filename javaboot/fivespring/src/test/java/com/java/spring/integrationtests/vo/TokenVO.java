@@ -1,13 +1,11 @@
 package com.java.spring.integrationtests.vo;
-
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
-
-@XmlRootElement
+@XmlRootElement(name = "TokenVO")
 public class TokenVO implements Serializable {
 
 

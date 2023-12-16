@@ -8,7 +8,6 @@ import com.java.spring.integrationtests.vo.AccountCredentialsVO;
 import com.java.spring.integrationtests.vo.PersonVO;
 import com.java.spring.integrationtests.vo.TokenVO;
 import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.common.mapper.TypeRef;
 import io.restassured.filter.log.LogDetail;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -102,6 +101,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertTrue(persistedPerson.getEnabled());
 
 		assertTrue(persistedPerson.getId()>0);
 
@@ -111,8 +111,6 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertNotNull("Male",persistedPerson.getGender());
 
 	}
-
-
 
 	@Test
 	@Order(2)
@@ -139,6 +137,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertTrue(persistedPerson.getEnabled());
 
 		assertEquals(personvo.getId(),persistedPerson.getId());
 
@@ -149,6 +148,42 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	}
 	@Test
 	@Order(3)
+	public void TDisablePerson () throws IOException {
+
+		mockPerson();
+
+		var content =
+				given().spec(specification)
+						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+						.pathParam("id", personvo.getId())
+						.when()
+						.patch("{id}")
+						.then()
+						.statusCode(200)
+						.extract()
+						.body()
+						.asString();
+
+		PersonVO persistedPerson = objectMapper.readValue(content, PersonVO.class);
+		personvo = persistedPerson;
+		assertNotNull(persistedPerson.getFirstName());
+		assertNotNull(persistedPerson.getLastName());
+		assertNotNull(persistedPerson.getAddress());
+		assertNotNull(persistedPerson.getGender());
+		assertFalse(persistedPerson.getEnabled());
+
+		assertEquals(personvo.getId(),persistedPerson.getId());
+
+		assertNotNull("Richard",persistedPerson.getFirstName());
+		assertNotNull("Stallman",persistedPerson.getLastName());
+		assertNotNull("New York City, US",persistedPerson.getAddress());
+		assertNotNull("Male",persistedPerson.getGender());
+
+
+	}
+
+	@Test
+	@Order(4)
 	public void TUpdatePerson () throws IOException {
 
 		mockPerson();
@@ -171,6 +206,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertNotNull(persistedPerson.getLastName());
 		assertNotNull(persistedPerson.getAddress());
 		assertNotNull(persistedPerson.getGender());
+		assertTrue(persistedPerson.getEnabled());
 
 		assertEquals(personvo.getId(),persistedPerson.getId());
 
@@ -182,11 +218,11 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-	@Order(4)
+	@Order(5)
 	public void TDeletePerson () throws IOException {
 
-				given().spec(specification)
-						.contentType(TestConfigs.CONTENT_TYPE_JSON)
+		given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
 						.pathParam("id", personvo.getId())
 						.when()
 						.delete("{id}")
@@ -198,7 +234,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 
 
 	@Test
-	@Order(5)
+	@Order(6)
 	public void TGetPersons () throws IOException, JsonMappingException, JsonProcessingException {
 
 
@@ -223,11 +259,12 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		assertEquals("Senna",person1.getLastName());
 		assertEquals("São Paulo",person1.getAddress());
 		assertEquals("Male",person1.getGender());
+		assertTrue(person1.getEnabled());
 
 	}
 
 	@Test
-	@Order(6)
+	@Order(7)
 	public void TGetPersonsWithOut () throws IOException, JsonMappingException, JsonProcessingException {
 		RequestSpecification specificationErr =
 				new RequestSpecBuilder()
@@ -255,6 +292,7 @@ public class PersonControllerJsonTest extends AbstractIntegrationTest {
 		personvo.setLastName("Stallman");
 		personvo.setAddress("New York City, US");
 		personvo.setGender("Male");
+		personvo.setEnabled(true);
 	}
 
 }
