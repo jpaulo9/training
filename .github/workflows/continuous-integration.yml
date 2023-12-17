@@ -1,15 +1,11 @@
 name: Continuous Integration GitActions
-
 on:
   push:
     branches: 
       - master 
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Docker Login
