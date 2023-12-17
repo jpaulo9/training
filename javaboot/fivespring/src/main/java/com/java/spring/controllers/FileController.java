@@ -2,7 +2,7 @@ package com.java.spring.controllers;
 
 
 import com.java.spring.model.UploadFileResponse;
-import com.java.spring.services.FIleStorageService;
+import com.java.spring.services.FileStorageService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @Tag(name = "File Endpoint")
 @RequestMapping("/api/file/v1")
 @RestController
-public class FIleController {
+public class FileController {
 
-    private Logger logger = Logger.getLogger(FIleController.class.getName());
+    private Logger logger = Logger.getLogger(FileController.class.getName());
 
     @Autowired
-    private FIleStorageService fIleStorageService;
+    private FileStorageService fIleStorageService;
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file){
