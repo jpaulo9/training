@@ -6,10 +6,12 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Docker Login
     
+    steps:
+    
+    - uses: actions/checkout@v3
+    
+    - name: Docker Login
     - uses: docker/login-action@v3.0.0
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
