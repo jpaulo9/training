@@ -14,7 +14,7 @@ security:
 spring:
   datasource:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://bank.cpqkqsu0qodf.us-east-1.rds.amazonaws.com:3306/bank?useTimezone=true&serverTimezone=UTC
+      url: jdbc:mysql://localhost:3306/bank?useTimezone=true&serverTimezone=UTC
       username: root
       password: admin123
   jpa:
